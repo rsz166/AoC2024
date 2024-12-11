@@ -1,3 +1,5 @@
+import math
+
 mapArray = []
 markers = []
 for i,l in enumerate(open('in08.txt')):
@@ -7,10 +9,19 @@ for i,l in enumerate(open('in08.txt')):
             markers.append([c,i,j])
 height = len(mapArray)
 width = len(mapArray[0])
+maxSize = max(height, width)
 # print(f'{height}x{width}')
 
-def get_harmonic(a,b):
-    return [2 * a[0] - b[0], 2 * a[1] - b[1]]
+def get_harmonics(a,b):
+    # part1
+    # return [[2 * a[0] - b[0], 2 * a[1] - b[1]]]
+    # part2
+    step = [a[0]-b[0],a[1]-b[1]]
+    div = math.gcd(step[0], step[1])
+    step[0] = int(step[0]/div)
+    step[1] = int(step[1]/div)
+    count = int(maxSize / max(step[0],step[1]))
+    return [[a[0]+i*step[0],a[1]+i*step[1]] for i in range(-count,count+1)]
 
 markerDict = {}
 for m in markers:
@@ -26,10 +37,11 @@ for m in markerDict:
     for a in markerDict[m]:
         for b in markerDict[m]:
             if a != b:
-                h = get_harmonic(a,b)
-                if h[0] >= 0 and h[0] < height and h[1] >= 0 and h[1] < width:
-                    if not h in validHarmonics:
-                        validHarmonics.append(h)
+                harmonics = get_harmonics(a,b)
+                for h in harmonics:
+                    if h[0] >= 0 and h[0] < height and h[1] >= 0 and h[1] < width:
+                        if not h in validHarmonics:
+                            validHarmonics.append(h)
 print(len(validHarmonics))
 # print(validHarmonics)
 
